@@ -1,0 +1,6 @@
+pkgtype(kind: "executable")
+
+import {
+  "hua1104/moonactuary/cli",
+  "moonbitlang/core/env",
+}

@@ -1,0 +1,151 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+  workflow_dispatch:
+
+# Only the newest run of a branch matters, and nothing here writes to the repo.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.stage }} (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        stage: [ check, build, test ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Report toolchain versions
+        run: |
+          moon version --all
+          moonc -v
+
+      - name: Check that the compiler meets the documented minimum
+        run: |
+          # moonc prints a leading "v"; require at least 0.10.14.
+          reported="$(moonc -v | head -1 | tr -d 'v' | cut -d+ -f1)"
+          printf 'moonc %s\n' "$reported"
+          python3 - "$reported" <<'PY'
+          import sys
+          want = (0, 10, 14)
+          got = tuple(int(p) for p in sys.argv[1].split('.')[:3])
+          print('minimum required:', '.'.join(map(str, want)))
+          sys.exit(0 if got >= want else 1)
+          PY
+
+      - name: Update dependencies
+        run: moon update
+
+      - name: Check
+        if: matrix.stage == 'check'
+        run: moon check --target all
+
+      - name: Build
+        if: matrix.stage == 'build'
+        run: moon build --target all
+
+      - name: Test
+        if: matrix.stage == 'test'
+        run: moon test --target all
+
+  lint:
+    name: formatting and interface
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Update dependencies
+        run: moon update
+
+      - name: Formatting
+        run: moon fmt --check
+
+      - name: Public interface is up to date
+        # `moon info` rewrites the .mbti files; a diff afterwards means the
+        # committed interface no longer describes the code.
+        run: |
+          moon info
+          git diff --exit-code -- '*.mbti'
+
+  smoke:
+    name: smoke test the command line tool
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Update dependencies
+        run: moon update
+
+      - name: Build the native binary
+        run: moon build --target native
+
+      - name: Run every subcommand and check the known figures
+        run: |
+          set -euo pipefail
+          bin=_build/native/debug/build/cmd/main/main.exe
+
+          "$bin" tables
+          "$bin" table --from 30 --to 32
+          "$bin" premium --product whole --age 40 --rate 3.0
+          "$bin" reserve --term 5
+          "$bin" plot --kind mortality > qx.svg
+          "$bin" plot --kind survival > lx.svg
+          "$bin" demo
+
+          # The published CL1 benchmark: radix, first-year deaths, person
+          # years, total person years and the expectation of life at birth.
+          "$bin" demo | grep -q '1000000 / 867 / 999567 / 76420142 / 76.42'
+          # The terminal reserve of an endowment equals the maturity benefit.
+          "$bin" demo | grep -q '第 20 年末准备金为 1.000000'
+          # Both curves are well formed SVG documents.
+          head -1 qx.svg | grep -q '<svg'
+          head -1 lx.svg | grep -q '<svg'
+
+      - name: Run the library example and check its figures
+        run: |
+          set -euo pipefail
+          moon run examples/quickstart | tee quickstart.txt
+          grep -q '986359'  quickstart.txt
+          grep -q '47.25'   quickstart.txt
+          grep -q '0.614601' quickstart.txt
+          grep -q '0.038895' quickstart.txt
+          grep -q '0.437487' quickstart.txt
+
+      - name: Upload the plotted curves
+        uses: actions/upload-artifact@v4
+        with:
+          name: curves
+          path: |
+            qx.svg
+            lx.svg
