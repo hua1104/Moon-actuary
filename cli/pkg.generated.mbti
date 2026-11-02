@@ -1,0 +1,23 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "hua1104/moonactuary/cli"
+
+// Values
+pub fn run(Array[String]) -> Unit
+
+// Errors
+
+// Types and methods
+pub struct Args {
+  command : String
+  flags : Array[(String, String)]
+}
+pub fn Args::int(Self, String, Int32) -> Int32
+pub fn Args::number(Self, String, Double) -> Double
+pub fn Args::parse(Array[String]) -> Self
+pub fn Args::present(Self, String) -> Bool
+pub fn Args::subcommand(Self) -> String
+pub fn Args::value(Self, String, String) -> String
+
+// Type aliases
+
+// Traits
