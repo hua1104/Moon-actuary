@@ -282,6 +282,22 @@ moon coverage analyze     # 覆盖率报告
 
 测试分三层：教科书公布值的逐行校核、与定义式求和的交叉验证（公式与其实现必须错成完全一样才能蒙混过关）、以及边界与退化输入（零利率、空期间、超范围年龄、单点与常量序列）。
 
+### 本地一键验收
+
+Linux / macOS：
+
+```bash
+bash scripts/acceptance.sh
+```
+
+Windows PowerShell：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/acceptance.ps1
+```
+
+Windows 脚本默认验证 wasm、wasm-gc 和 JavaScript 后端；安装 MSVC Build Tools 后也可以直接运行 `moon build --target native`。
+
 ## 持续集成
 
 `.github/workflows/ci.yml` 在每次推送与每个 PR 上执行：
