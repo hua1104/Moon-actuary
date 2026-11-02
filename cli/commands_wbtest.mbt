@@ -24,6 +24,7 @@ test "every subcommand completes on the default arguments" {
   run(invocation(["table", "--from", "0", "--to", "2"]))
   run(invocation(["premium"]))
   run(invocation(["compare"]))
+  run(invocation(["compare", "--format", "csv"]))
   run(invocation(["reserve", "--term", "3"]))
   run(invocation(["plot"]))
   run(invocation(["demo", "--term", "3"]))
@@ -76,6 +77,7 @@ test "invalid user input is rejected before actuarial evaluation" {
       ["premium", "--rate", "-100"],
       ["table", "--from", "30", "--to", "20"],
       ["plot", "--kind", "unknown"],
+      ["compare", "--format", "xml"],
       ["premium", "--table", "CL9"],
     ] {
     run(invocation(words))

@@ -117,6 +117,7 @@ moonactuary <命令> [选项]
 | `--product` | 险种 `whole`（终身）/ `term`（定期）/ `endowment`（两全） | `endowment` |
 | `--from` `--to` | 生命表年龄区间 | `0` `105` |
 | `--kind` | 曲线 `mortality` / `survival` | `mortality` |
+| `--format` | `compare` 输出格式 `table` / `csv` | `table` |
 | `--help` | 打印用法 | — |
 
 ### 示例
@@ -141,6 +142,13 @@ CL1 · 终身寿险 · 投保年龄 40 · 期间 20 年 · 利率 3.00%
 ----------------------------------------------------
 趸缴纯保费        0.343820
 年缴均衡纯保费    0.015261
+```
+
+六张表横向比较，并导出 CSV：
+
+```bash
+moon run cmd/main compare --product term --age 40 --term 10 --rate 3.5
+moon run cmd/main compare --format csv > premiums.csv
 ```
 
 ```bash

@@ -34,6 +34,7 @@ fn usage() -> Unit {
   )
   println("  --from N --to N    生命表年龄区间，默认 0 105")
   println("  --kind 曲线        mortality | survival，默认 mortality")
+  println("  --format 格式      compare 输出 table | csv，默认 table")
 }
 
 ///|
@@ -168,6 +169,28 @@ fn cmd_compare(args : Args) -> Unit {
   let age = args.int("age", 30)
   let term = args.int("term", 20)
   let interest = pick_interest(args)
+  let format = args.value("format", "table")
+  if format == "csv" {
+    println("code,name,product,age,term,rate,single_premium,annual_premium")
+    for china in @moonactuary.all_china_tables() {
+      let v = @moonactuary.Valuation::of(table=china.table(), interest~)
+      let (single, annual) = single_and_annual(v, age, term, product)
+      println(
+        china.code() +
+        "," +
+        china.chinese_name() +
+        "," +
+        product +
+        ",\{age},\{term}," +
+        @moonactuary.fixed(args.number("rate", 2.5), 2) +
+        "," +
+        @moonactuary.fixed(single, 6) +
+        "," +
+        @moonactuary.fixed(annual, 6),
+      )
+    }
+    return
+  }
   println(
     product_name(product) +
     " · 投保年龄 \{age} · 期间 \{term} 年 · 利率 " +

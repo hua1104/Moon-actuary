@@ -107,6 +107,13 @@ fn validate_args(args : Args) -> Bool {
     )
     return false
   }
+  if command == "compare" {
+    let format = args.value("format", "table")
+    if format != "table" && format != "csv" {
+      println("错误：未知输出格式 " + format + "，可选 table | csv")
+      return false
+    }
+  }
   let age = args.int("age", 30)
   let term = args.int("term", 20)
   let rate = args.number("rate", 2.5)
