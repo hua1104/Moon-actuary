@@ -36,9 +36,10 @@ moon test --target all
 
 1. 用 `moon run cmd/main tables` 展示六张中国经验生命表。
 2. 用 `moon run cmd/main premium --product endowment --age 30 --term 20 --rate 2.5` 现场计算保费。
-3. 用 `moon run cmd/main reserve --term 5` 展示三种准备金方法逐年完全一致。
-4. 用 `moon run cmd/main plot --kind mortality > qx.svg` 展示 MoonBit 零依赖 SVG 绘图。
-5. 最后运行 `moon run cmd/main verify`，以自动化 `PASS` 作为结论。
+3. 用 `moon run cmd/main compare --product term --age 40 --term 10 --rate 3.5` 对比六张表。
+4. 用 `moon run cmd/main reserve --term 5` 展示三种准备金方法逐年完全一致。
+5. 用 `moon run cmd/main plot --kind mortality > qx.svg` 展示 MoonBit 零依赖 SVG 绘图。
+6. 最后运行 `moon run cmd/main verify`，以自动化 `PASS` 作为结论。
 
 ## 关键验收数字
 

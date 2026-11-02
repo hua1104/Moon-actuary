@@ -312,6 +312,7 @@ Windows 脚本默认验证 wasm、wasm-gc 和 JavaScript 后端；安装 MSVC Bu
 | 冒烟 | 运行 `demo` / `tables` / `premium` / `reserve` 并核对关键数字 |
 
 黑客松评审的快速复现步骤、项目亮点和两分钟演示路线见 [`HACKATHON.md`](HACKATHON.md)。
+正式项目申报内容见 [`APPLICATION.md`](APPLICATION.md)。
 
 ## 许可证
 

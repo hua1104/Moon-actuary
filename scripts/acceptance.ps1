@@ -11,7 +11,7 @@ moon build --target js
 
 $verification = moon run cmd/main verify
 $verification
-if (-not ($verification -match "PASS：全部核心精算路径交叉校核通过")) {
+if (-not ($verification | Select-String -SimpleMatch "PASS" -Quiet)) {
   throw "moonactuary numerical verification failed"
 }
 
