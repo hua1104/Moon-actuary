@@ -87,6 +87,31 @@ pub fn Args::number(self : Args, key : String, fallback : Double) -> Double {
 }
 
 ///|
+/// Whether a supplied integer flag is syntactically valid. Missing flags are
+/// valid because every command has a documented default.
+pub fn Args::valid_int(self : Args, key : String) -> Bool {
+  let raw = self.value(key, "")
+  if raw == "" {
+    true
+  } else {
+    ignore(@strconv.parse_int(raw) catch { _ => return false })
+    true
+  }
+}
+
+///|
+/// Whether a supplied floating-point flag is syntactically valid.
+pub fn Args::valid_number(self : Args, key : String) -> Bool {
+  let raw = self.value(key, "")
+  if raw == "" {
+    true
+  } else {
+    ignore(@strconv.parse_double(raw) catch { _ => return false })
+    true
+  }
+}
+
+///|
 /// Whether a bare flag was supplied.
 pub fn Args::present(self : Args, key : String) -> Bool {
   for entry in self.flags {

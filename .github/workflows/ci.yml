@@ -122,12 +122,14 @@ jobs:
           "$bin" plot --kind mortality > qx.svg
           "$bin" plot --kind survival > lx.svg
           "$bin" demo
+          "$bin" verify | tee verify.txt
 
           # The published CL1 benchmark: radix, first-year deaths, person
           # years, total person years and the expectation of life at birth.
           "$bin" demo | grep -q '1000000 / 867 / 999567 / 76420142 / 76.42'
           # The terminal reserve of an endowment equals the maturity benefit.
           "$bin" demo | grep -q '第 20 年末准备金为 1.000000'
+          grep -q 'PASS：全部核心精算路径交叉校核通过' verify.txt
           # Both curves are well formed SVG documents.
           head -1 qx.svg | grep -q '<svg'
           head -1 lx.svg | grep -q '<svg'

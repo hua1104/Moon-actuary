@@ -19,6 +19,9 @@ fn usage() -> Unit {
   println(
     "  demo       最小演示：一条命令触发全部核心功能路径",
   )
+  println(
+    "  verify     一键验收：跨表、利率、产品执行数值交叉校核",
+  )
   println("")
   println("选项:")
   println("  --table CL1..CL6   经验表，默认 CL1")
@@ -391,4 +394,64 @@ fn cmd_demo(args : Args) -> Unit {
     @moonactuary.fixed(rolled[term], 6) +
     "（等于满期给付额）",
   )
+}
+
+///|
+/// Machine-friendly acceptance verification. It exercises all six mortality
+/// tables, three interest bases and all three supported product forms.
+fn cmd_verify(_args : Args) -> Unit {
+  let age = 30
+  let term = 20
+  let tolerance = 1.0e-8
+  let mut identity_cases = 0
+  let mut reserve_cases = 0
+  let mut worst_identity = 0.0
+  let mut worst_reserve = 0.0
+  for china in @moonactuary.all_china_tables() {
+    for rate in [0.025, 0.03, 0.035] {
+      let v = @moonactuary.Valuation::of(
+        table=china.table(),
+        interest=@moonactuary.Interest::of(rate),
+      )
+      for x in [0, 10, 25, 40, 55, 70, 90] {
+        let gap = v.insurance_annuity_identity(x).abs()
+        identity_cases = identity_cases + 1
+        if gap > worst_identity {
+          worst_identity = gap
+        }
+      }
+      for product in ["whole", "term", "endowment"] {
+        let (_single, premium) = single_and_annual(v, age, term, product)
+        let rolled = v.reserve_schedule_fackler(age, 0, term, premium, 1.0, 0.0)
+        for t in 0..<(term + 1) {
+          let forward = forward_reserve(v, age, term, t, premium, product)
+          let backward = v.reserve_retrospective(age, t, premium)
+          let gap = max_gap(
+            (forward - backward).abs(),
+            (forward - rolled[t]).abs(),
+          )
+          reserve_cases = reserve_cases + 1
+          if gap > worst_reserve {
+            worst_reserve = gap
+          }
+        }
+      }
+    }
+  }
+  println("moonactuary acceptance verification")
+  println("  生命表：6 张 CL(2010-2013) 经验表")
+  println("  利率：2.5% / 3.0% / 3.5%")
+  println("  产品：终身寿险 / 定期寿险 / 两全保险")
+  println(
+    "  恒等式校核：\{identity_cases} 项，最大残差 " +
+    @moonactuary.fixed(worst_identity, 12),
+  )
+  println(
+    "  准备金校核：\{reserve_cases} 项，最大偏差 " +
+    @moonactuary.fixed(worst_reserve, 12),
+  )
+  if worst_identity > tolerance || worst_reserve > tolerance {
+    abort("moonactuary verification failed")
+  }
+  println("PASS：全部核心精算路径交叉校核通过")
 }

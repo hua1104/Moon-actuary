@@ -55,6 +55,9 @@ test "unparsable numbers fall back instead of failing the run" {
   assert_eq(args.number("rate", 2.5), 2.5)
   // The raw text is still available for the caller that wants to validate it.
   assert_eq(args.value("age", ""), "thirty")
+  assert_true(!args.valid_int("age"), msg="invalid age must be detectable")
+  assert_true(!args.valid_number("rate"), msg="invalid rate must be detectable")
+  assert_true(args.valid_int("term"), msg="missing values use defaults")
 }
 
 ///|

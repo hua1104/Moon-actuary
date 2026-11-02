@@ -61,6 +61,27 @@ test "unknown and missing subcommands fall back to usage" {
 }
 
 ///|
+test "acceptance verification covers every numerical path" {
+  run(invocation(["verify"]))
+}
+
+///|
+test "invalid user input is rejected before actuarial evaluation" {
+  for
+    words in [
+      ["premium", "--age", "thirty"],
+      ["premium", "--product", "mystery"],
+      ["premium", "--age", "100", "--term", "20"],
+      ["premium", "--rate", "-100"],
+      ["table", "--from", "30", "--to", "20"],
+      ["plot", "--kind", "unknown"],
+      ["premium", "--table", "CL9"],
+    ] {
+    run(invocation(words))
+  }
+}
+
+///|
 test "products are named and priced consistently" {
   assert_eq(product_name("whole"), "终身寿险")
   assert_eq(product_name("term"), "定期寿险")
