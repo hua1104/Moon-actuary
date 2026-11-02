@@ -14,6 +14,7 @@ fn usage() -> Unit {
   println("  tables     列出六张经验表及其零岁平均余命")
   println("  table      打印生命表函数 lx / dx / Lx / Tx / ex")
   println("  premium    计算趸缴纯保费与年缴均衡纯保费")
+  println("  compare    按统一假设对比六张经验表的保费")
   println("  reserve    打印逐年准备金表")
   println("  plot       生成 SVG 曲线，输出到标准输出")
   println(
@@ -158,6 +159,39 @@ fn cmd_premium(args : Args) -> Unit {
   println(@moonactuary.rule(52, '-'))
   println("趸缴纯保费        " + @moonactuary.fixed(single, 6))
   println("年缴均衡纯保费    " + @moonactuary.fixed(annual, 6))
+}
+
+///|
+/// Compare the same policy assumptions across all six experience tables.
+fn cmd_compare(args : Args) -> Unit {
+  let product = args.value("product", "endowment")
+  let age = args.int("age", 30)
+  let term = args.int("term", 20)
+  let interest = pick_interest(args)
+  println(
+    product_name(product) +
+    " · 投保年龄 \{age} · 期间 \{term} 年 · 利率 " +
+    @moonactuary.fixed(args.number("rate", 2.5), 2) +
+    "%",
+  )
+  println(@moonactuary.rule(62, '-'))
+  println(
+    @moonactuary.pad_right("代码", 6) +
+    @moonactuary.pad_right("业务表", 26) +
+    cell("趸缴纯保费", 14) +
+    cell("年缴纯保费", 14),
+  )
+  println(@moonactuary.rule(62, '-'))
+  for china in @moonactuary.all_china_tables() {
+    let v = @moonactuary.Valuation::of(table=china.table(), interest~)
+    let (single, annual) = single_and_annual(v, age, term, product)
+    println(
+      @moonactuary.pad_right(china.code(), 6) +
+      @moonactuary.pad_right(china.chinese_name(), 26) +
+      cell(@moonactuary.fixed(single, 6), 14) +
+      cell(@moonactuary.fixed(annual, 6), 14),
+    )
+  }
 }
 
 ///|

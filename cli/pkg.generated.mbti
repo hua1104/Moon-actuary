@@ -11,7 +11,7 @@ pub struct Args {
   command : String
   flags : Array[(String, String)]
 }
-pub fn Args::int(Self, String, Int32) -> Int32
+pub fn Args::int(Self, String, Int) -> Int
 pub fn Args::number(Self, String, Double) -> Double
 pub fn Args::parse(Array[String]) -> Self
 pub fn Args::present(Self, String) -> Bool

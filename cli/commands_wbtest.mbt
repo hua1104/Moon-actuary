@@ -23,6 +23,7 @@ test "every subcommand completes on the default arguments" {
   run(invocation(["tables"]))
   run(invocation(["table", "--from", "0", "--to", "2"]))
   run(invocation(["premium"]))
+  run(invocation(["compare"]))
   run(invocation(["reserve", "--term", "3"]))
   run(invocation(["plot"]))
   run(invocation(["demo", "--term", "3"]))

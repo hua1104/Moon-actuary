@@ -19,6 +19,7 @@ pub fn run(argv : Array[String]) -> Unit {
     "tables" => cmd_tables(args)
     "table" => cmd_table(args)
     "premium" => cmd_premium(args)
+    "compare" => cmd_compare(args)
     "reserve" => cmd_reserve(args)
     "plot" => cmd_plot(args)
     "demo" => cmd_demo(args)
@@ -26,7 +27,7 @@ pub fn run(argv : Array[String]) -> Unit {
     "help" => usage()
     "" => {
       println(
-        "错误：缺少命令，可用 tables | table | premium | reserve | plot | demo | verify",
+        "错误：缺少命令，可用 tables | table | premium | compare | reserve | plot | demo | verify",
       )
       println("")
       usage()
@@ -52,6 +53,7 @@ fn validate_args(args : Args) -> Bool {
   }
   if command != "table" &&
     command != "premium" &&
+    command != "compare" &&
     command != "reserve" &&
     command != "plot" &&
     command != "demo" {
