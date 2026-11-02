@@ -1,0 +1,198 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "hua1104/moonactuary"
+
+// Values
+pub fn all_china_tables() -> Array[ChinaTable]
+
+pub let cl1_qx : Array[Double]
+
+pub let cl2_qx : Array[Double]
+
+pub let cl3_qx : Array[Double]
+
+pub let cl4_qx : Array[Double]
+
+pub let cl5_qx : Array[Double]
+
+pub let cl6_qx : Array[Double]
+
+pub fn fixed(Double, Int32) -> String
+
+pub fn pad_left(String, Int32) -> String
+
+pub fn pad_right(String, Int32) -> String
+
+pub fn percent(Double, Int32) -> String
+
+pub fn rule(Int32, Char) -> String
+
+// Errors
+
+// Types and methods
+pub struct Chart {
+  title : String
+  subtitle : String
+  x_label : String
+  y_label : String
+  series : Array[Series]
+  logarithmic : Bool
+  width : Int32
+  height : Int32
+}
+pub fn Chart::logarithmic(Self) -> Self
+pub fn Chart::new(String) -> Self
+pub fn Chart::render(Self) -> String
+pub fn Chart::series(Self, String, String, Array[Point]) -> Self
+pub fn Chart::size(Self, Int32, Int32) -> Self
+pub fn Chart::subtitle(Self, String) -> Self
+pub fn Chart::x_label(Self, String) -> Self
+pub fn Chart::y_label(Self, String) -> Self
+
+pub enum ChinaTable {
+  NonPensionIMale
+  NonPensionIFemale
+  NonPensionIIMale
+  NonPensionIIFemale
+  PensionMale
+  PensionFemale
+}
+pub fn ChinaTable::chinese_name(Self) -> String
+pub fn ChinaTable::code(Self) -> String
+pub fn ChinaTable::english_name(Self) -> String
+pub fn ChinaTable::is_pension(Self) -> Bool
+pub fn ChinaTable::of_code(String) -> Self?
+pub fn ChinaTable::qx(Self) -> Array[Double]
+pub fn ChinaTable::table(Self, radix? : Double, fraction? : FractionalAge) -> LifeTable
+
+pub struct Commutation {
+  d : Array[Double]
+  c : Array[Double]
+  m : Array[Double]
+  n : Array[Double]
+  r : Array[Double]
+  s : Array[Double]
+}
+
+pub enum FractionalAge {
+  UniformDeaths
+  ConstantForce
+  Hyperbolic
+}
+pub fn FractionalAge::parse(String) -> Self?
+
+pub struct Interest {
+  rate : Double
+}
+pub fn Interest::accumulate(Self, Double) -> Double
+pub fn Interest::accumulated_due(Self, Int32) -> Double
+pub fn Interest::accumulated_immediate(Self, Int32) -> Double
+pub fn Interest::accumulation_factor(Self) -> Double
+pub fn Interest::annual(Self) -> Double
+pub fn Interest::annuity_continuous(Self, Int32) -> Double
+pub fn Interest::annuity_due(Self, Int32) -> Double
+pub fn Interest::annuity_due_mthly(Self, Int32, Int32) -> Double
+pub fn Interest::annuity_immediate(Self, Int32) -> Double
+pub fn Interest::annuity_immediate_mthly(Self, Int32, Int32) -> Double
+pub fn Interest::decreasing_annuity(Self, Int32) -> Double
+pub fn Interest::discount(Self, Double) -> Double
+pub fn Interest::discount_factor(Self) -> Double
+pub fn Interest::discount_rate(Self) -> Double
+pub fn Interest::force(Self) -> Double
+pub fn Interest::increasing_annuity(Self, Int32) -> Double
+pub fn Interest::nominal(Self, Int32) -> Double
+pub fn Interest::nominal_discount(Self, Int32) -> Double
+pub fn Interest::of(Double) -> Self
+pub fn Interest::of_discount_rate(Double) -> Self
+pub fn Interest::of_force(Double) -> Self
+pub fn Interest::of_nominal(Double, Int32) -> Self
+pub fn Interest::perpetuity(Self) -> Double
+pub fn Interest::perpetuity_due(Self) -> Double
+
+pub struct LifeTable {
+  id : String
+  label : String
+  omega : Int32
+  radix : Double
+  fraction : FractionalAge
+  qx : Array[Double]
+  lx : Array[Double]
+  dx : Array[Double]
+  big_lx : Array[Double]
+  big_tx : Array[Double]
+  ex : Array[Double]
+}
+pub fn LifeTable::curtate_expectation(Self, Int32) -> Double
+pub fn LifeTable::death_probability(Self, Int32, Int32) -> Double
+pub fn LifeTable::deferred_death_probability(Self, Int32, Int32) -> Double
+pub fn LifeTable::dx(Self, Int32) -> Double
+pub fn LifeTable::expectation(Self, Int32) -> Double
+pub fn LifeTable::fraction(Self) -> FractionalAge
+pub fn LifeTable::from_qx(qx~ : Array[Double], id? : String, label? : String, radix? : Double, fraction? : FractionalAge) -> Self
+pub fn LifeTable::id(Self) -> String
+pub fn LifeTable::label(Self) -> String
+pub fn LifeTable::limiting_age(Self) -> Int32
+pub fn LifeTable::lx(Self, Int32) -> Double
+pub fn LifeTable::person_years(Self, Int32) -> Double
+pub fn LifeTable::px(Self, Int32) -> Double
+pub fn LifeTable::qx(Self, Int32) -> Double
+pub fn LifeTable::radix(Self) -> Double
+pub fn LifeTable::survival(Self, Int32, Int32) -> Double
+pub fn LifeTable::total_person_years(Self, Int32) -> Double
+
+pub struct Point {
+  x : Double
+  y : Double
+}
+pub fn Point::of(Double, Double) -> Self
+
+pub struct Series {
+  name : String
+  colour : String
+  points : Array[Point]
+}
+
+pub struct Valuation {
+  table : LifeTable
+  interest : Interest
+  comm : Commutation
+}
+pub fn Valuation::annual_premium_endowment(Self, Int32, Int32) -> Double
+pub fn Valuation::annual_premium_limited(Self, Int32, Int32) -> Double
+pub fn Valuation::annual_premium_term(Self, Int32, Int32) -> Double
+pub fn Valuation::annual_premium_whole_life(Self, Int32) -> Double
+pub fn Valuation::commutation_c(Self, Int32) -> Double
+pub fn Valuation::commutation_d(Self, Int32) -> Double
+pub fn Valuation::commutation_m(Self, Int32) -> Double
+pub fn Valuation::commutation_n(Self, Int32) -> Double
+pub fn Valuation::commutation_r(Self, Int32) -> Double
+pub fn Valuation::commutation_s(Self, Int32) -> Double
+pub fn Valuation::continuous_annuity(Self, Int32) -> Double
+pub fn Valuation::continuous_insurance(Self, Int32) -> Double
+pub fn Valuation::decreasing_term_insurance(Self, Int32, Int32) -> Double
+pub fn Valuation::deferred_annuity(Self, Int32, Int32) -> Double
+pub fn Valuation::deferred_insurance(Self, Int32, Int32) -> Double
+pub fn Valuation::endowment_insurance(Self, Int32, Int32) -> Double
+pub fn Valuation::increasing_annuity(Self, Int32) -> Double
+pub fn Valuation::increasing_insurance(Self, Int32) -> Double
+pub fn Valuation::increasing_term_insurance(Self, Int32, Int32) -> Double
+pub fn Valuation::insurance_annuity_identity(Self, Int32) -> Double
+pub fn Valuation::interest(Self) -> Interest
+pub fn Valuation::life_table(Self) -> LifeTable
+pub fn Valuation::limiting_age(Self) -> Int32
+pub fn Valuation::of(table~ : LifeTable, interest~ : Interest) -> Self
+pub fn Valuation::pure_endowment(Self, Int32, Int32) -> Double
+pub fn Valuation::reserve_endowment(Self, Int32, Int32, Int32, Double) -> Double
+pub fn Valuation::reserve_retrospective(Self, Int32, Int32, Double) -> Double
+pub fn Valuation::reserve_schedule_fackler(Self, Int32, Int32, Int32, Double, Double, Double) -> Array[Double]
+pub fn Valuation::reserve_step(Self, Double, Double, Int32, Double) -> Double
+pub fn Valuation::reserve_term(Self, Int32, Int32, Int32, Double) -> Double
+pub fn Valuation::reserve_whole_life(Self, Int32, Int32, Double) -> Double
+pub fn Valuation::temporary_annuity(Self, Int32, Int32) -> Double
+pub fn Valuation::term_insurance(Self, Int32, Int32) -> Double
+pub fn Valuation::whole_life_annuity(Self, Int32) -> Double
+pub fn Valuation::whole_life_annuity_immediate(Self, Int32) -> Double
+pub fn Valuation::whole_life_insurance(Self, Int32) -> Double
+
+// Type aliases
+
+// Traits
